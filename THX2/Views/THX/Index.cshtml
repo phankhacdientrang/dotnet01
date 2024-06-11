@@ -1,0 +1,620 @@
+﻿@model Tuple<IEnumerable<THX2.Entities.Tinh>, IEnumerable<THX2.Entities.Huyen>, IEnumerable<THX2.Entities.Xa>>
+@{
+    var tinhList = (IEnumerable<THX2.Entities.Tinh>)ViewData["Tinh"];
+    var huyenList = (IEnumerable<THX2.Entities.Huyen>)ViewData["Huyen"];
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Index</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <style>
+        /* Điều chỉnh kích thước và căn chỉnh modal */
+        .modal-content {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Điều chỉnh nút "Create" */
+        .btn-create {
+            margin-bottom: 10px;
+        }
+
+        /* Điều chỉnh tiêu đề các bảng */
+        .table-heading {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        /* Điều chỉnh đường viền và màu nền của các nút */
+        .btn-edit,
+        .btn-delete,
+        .btn-edit-huyen,
+        .btn-delete-huyen,
+        .btn-edit-xa,
+        .btn-delete-xa {
+            margin-right: 5px;
+            border: none;
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+        }
+
+        /* Điều chỉnh căn chỉnh của các tiêu đề */
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Điều chỉnh màu sắc của tiêu đề */
+        h2 {
+            color: #007bff;
+        }
+
+        /* Điều chỉnh màu sắc của nền bảng */
+        .table {
+            background-color: #fff;
+        }
+
+        /* Điều chỉnh màu sắc của các dòng chẵn trong bảng */
+        .table-striped tbody tr:nth-of-type(even) {
+            background-color: #f8f9fa;
+        }
+
+        /* Điều chỉnh màu sắc của các nút Create */
+        .btn-success {
+            background-color: #25a745;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        
+
+        <div class="row">
+            <div class="col-md-4">
+                <h2>
+                    Tỉnh
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal1">Create</button>
+                </h2>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Tên Tỉnh</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tinh-table">
+                        <!-- Tỉnh sẽ được hiển thị ở đây -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col-md-4">
+                <h2>
+                    Huyện
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">Create</button>
+               </h2>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Tên Huyện</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="huyen-table">
+                        <!-- Huyện sẽ được hiển thị ở đây -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col-md-4">
+                <h2>
+                    Xã
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal2">Create</button>
+                </h2>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Tên Xã</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="xa-table">
+                        <!-- Xã sẽ được hiển thị ở đây -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Create  Tinh -->
+    <div class="modal fade" id="createModal1" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createModalLabel">Create Tỉnh</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createTinhForm" asp-controller="Tinh" asp-action="Create" method="post">
+                        <div class="mb-3">
+                            <label for="MaTinh" class="form-label">Mã Tỉnh</label>
+                            <input type="text" class="form-control" name="MaT" id="createMaT">
+                        </div>
+                        <div class="mb-3">
+                            <label for="TenTinh" class="form-label">Tên Tỉnh</label>
+                            <input type="text" class="form-control" name="Ten" id="createTen">
+                        </div>
+                        <div class="mb-3">
+                            <label for="Cap" class="form-label">Cấp</label>
+                            <input type="text" class="form-control" name="Cap" id="createCap">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Edit Tinh -->
+    <div class="modal fade" id="editModal1" tabindex="-1" aria-labelledby="editTinhModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Tỉnh</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editTinhForm" asp-controller="Tinh" asp-action="Edited" method="post">
+                        <input type="hidden" name="MaT" id="editMaT" />
+                        <div class="mb-3">
+                            <label for="Ten" class="form-label">Tên Tỉnh</label>
+                            <input type="text" class="form-control" name="Ten" id="editTen">
+                        </div>
+                        <div class="mb-3">
+                            <label for="Cap" class="form-label">Cấp</label>
+                            <input type="text" class="form-control" name="Cap" id="editCap">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Create Huyen -->
+    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createModalLabel">Create Huyện</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form asp-controller="Huyen" asp-action="Create" method="post">
+                        <div class="mb-3">
+                            <label for="MaT" class="form-label">Mã Tỉnh</label>
+                            <select class="form-select" name="MaT" id="createMaT">
+                                <option value="">Chọn Tỉnh</option>
+                                @if (tinhList != null)
+                                {
+                                    foreach (var tinh in tinhList)
+                                    {
+                                        <option value="@tinh.MaT">@tinh.Ten</option>
+                                    }
+                                }
+                            </select>
+
+                        </div>
+                        <div class="mb-3">
+                            <label for="MaH" class="form-label">Mã Huyện</label>
+                            <input type="text" class="form-control" name="MaH" id="createMaH">
+                        </div>
+                        <div class="mb-3">
+                            <label for="Ten" class="form-label">Tên Huyện</label>
+                            <input type="text" class="form-control" name="Ten" id="createTen">
+                        </div>
+                        <div class="mb-3">
+                            <label for="Cap" class="form-label">Cấp</label>
+                            <input type="text" class="form-control" name="Cap" id="createCap">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal Edit Huyen -->
+    <div class="modal fade" id="editModal2" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Huyện</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form asp-controller="Huyen" asp-action="Edited" method="post">
+                        <input type="hidden" name="MaH" id="editMaH" />
+                        <div class="mb-3">
+                            <label for="MaT" class="form-label">Mã Tỉnh</label>
+                            <select class="form-select" name="MaT" id="editMaT">
+                                @if (ViewData["Tinh"] != null)
+                                {
+                                    @foreach (var tinh in tinhList)
+                                    {
+                                        <option value="@tinh.MaT">@tinh.Ten</option>
+                                    }
+                                }
+
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="Ten" class="form-label">Tên Huyện</label>
+                            <input type="text" class="form-control" name="Ten" id="editTen">
+                        </div>
+                        <div class="mb-3">
+                            <label for="Cap" class="form-label">Cấp</label>
+                            <input type="text" class="form-control" name="Cap" id="editCap">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <!-- Modal Create Xa -->
+    <div class="modal fade" id="createModal2" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createModalLabel">Create Xã</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form asp-controller="Xa" asp-action="Create" method="post">
+                        <div class="mb-3">
+                            <label for="MaT" class="form-label">Mã Tỉnh</label>
+                            <select class="form-select" name="MaT" id="createMaTwCreateT" onchange="loadHuyens('create')">
+                                <option value="">Chọn Tỉnh</option>
+                                @foreach (var tinh in tinhList)
+                                {
+                                    <option value="@tinh.MaT">@tinh.Ten</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="MaH" class="form-label">Mã Huyện</label>
+                            <select class="form-select" name="MaH" id="createMaHwCreateT">
+                                <option value="">Chọn Huyện</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="MaX" class="form-label">Mã Xã</label>
+                            <input type="text" class="form-control" name="MaX" id="createMaX">
+                        </div>
+                        <div class="mb-3">
+                            <label for="Ten" class="form-label">Tên Xã</label>
+                            <input type="text" class="form-control" name="Ten" id="createTen">
+                        </div>
+                        <div class="mb-3">
+                            <label for="Cap" class="form-label">Cấp</label>
+                            <input type="text" class="form-control" name="Cap" id="createCap">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Edit Xa -->
+    <div class="modal fade" id="editModal3" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Xã</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form asp-controller="Xa" asp-action="Edited" method="post">
+                        <input type="hidden" name="MaX" id="editMaX" />
+                        <div class="mb-3">
+                            <label for="MaT" class="form-label">Mã Tỉnh</label>
+                            <select class="form-select" name="MaT" id="editMaTa" onchange="loadHuyens('edit')">
+                                <option value="">Chọn Tỉnh</option>
+                                @foreach (var tinh in tinhList)
+                                {
+                                    <option value="@tinh.MaT">@tinh.Ten</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="MaH" class="form-label">Mã Huyện</label>
+                            <select class="form-select" name="MaH" id="editMaHa">
+                                <option value="">Chọn Huyện</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="Ten" class="form-label">Tên Xã</label>
+                            <input type="text" class="form-control" name="Ten" id="editTen">
+                        </div>
+                        <div class="mb-3">
+                            <label for="Cap" class="form-label">Cấp</label>
+                            <input type="text" class="form-control" name="Cap" id="editCap">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            loadTinhs();
+            //LOAD TỈNH
+            function loadTinhs() {
+                $.get('/THX/GetTinhs', function (data) {
+                    var tinhHtml = '';
+                    data.forEach(function (tinh) {
+                        tinhHtml += '<tr>' +
+                            '<td><a href="#" class="tinh-link" data-id="' + tinh.maT + '">' + tinh.ten + '</a></td>' +
+                            '<td>' +
+                            '<button type="button" class="btn btn-warning btn-edit" data-bs-toggle="modal" data-bs-target="#editModal1" data-id="' + tinh.maT + '" data-ten="' + tinh.ten + '" data-cap="' + tinh.cap + '">Edit</button> ' +
+                            '<button type="button" class="btn btn-danger btn-delete" data-id="' + tinh.maT + '">Xóa</button>' +
+                            '</td>' +
+                            '</tr>';
+                    });
+                    $('#tinh-table').html(tinhHtml);
+                });
+            }
+
+            $(document).on('click', '.tinh-link', function (e) {
+                e.preventDefault();
+                var maT = $(this).data('id');
+                loadHuyens(maT);
+                $('#xa-table').html('');
+            });
+
+            //load huyen
+            function loadHuyens(maT) {
+                $.get('/THX/GetHuyens', { maT: maT }, function (data) {
+                    var huyenHtml = '';
+                    data.forEach(function (huyen) {
+                        huyenHtml += '<tr>' +
+                            '<td><a href="#" class="huyen-link" data-id="' + huyen.maH + '">' + huyen.ten + '</a></td>' +
+                            '<td>' +
+                            '<button type="button" class="btn btn-warning btn-edit-huyen" data-bs-toggle="modal" data-bs-target="#editModal2" data-maT="' + huyen.maT + '" data-maH="' + huyen.maH + '" data-ten="' + huyen.ten + '" data-cap="' + huyen.cap + '">Edit</button> ' +
+                            '<button type="button" class="btn btn-danger btn-delete-huyen" data-id="' + huyen.maH + '">Xóa</button>' +
+                            '</td>' +
+                            '</tr>';
+                    });
+                    $('#huyen-table').html(huyenHtml);
+                });
+            }
+
+            $(document).on('click', '.huyen-link', function (e) {
+                e.preventDefault();
+                var maH = $(this).data('id');
+                loadXas(maH);
+            });
+            // LOAD XÃ
+            function loadXas(maH) {
+                $.get('/THX/GetXas', { maH: maH }, function (data) {
+                    var xaHtml = '';
+                    data.forEach(function (xa) {
+                        xaHtml += '<tr>' +
+                            '<td><a href="#" class="xa-link" data-id="' + xa.maX + '">' + xa.ten + '</a></td>' +
+                            '<td>' +
+                            '<button type="button" class="btn btn-warning btn-edit-xa" data-bs-toggle="modal" data-bs-target="#editModal3" data-maT="' + xa.maT + '" data-maH="' + xa.maH + '" data-maX="' + xa.maX + '" data-ten="' + xa.ten + '" data-cap="' + xa.cap + '">Edit</button> ' +
+                            '<button type="button" class="btn btn-danger btn-delete-xa" data-id="' + xa.maX + '">Xóa</button>' +
+                            '</td>' +
+                            '</tr>';
+                    });
+                    $('#xa-table').html(xaHtml);
+                });
+            }
+
+        });
+
+        
+
+    </script>
+    
+    <script>
+        //EDIT TỈNH
+        var editModal1 = document.getElementById('editModal1');
+        editModal1.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var id = button.getAttribute('data-id');
+            var ten = button.getAttribute('data-ten');
+            var cap = button.getAttribute('data-cap');
+
+            var modalTitle = editModal1.querySelector('.modal-title');
+            var inputMaT = editModal1.querySelector('#editMaT');
+            var inputTen = editModal1.querySelector('#editTen');
+            var inputCap = editModal1.querySelector('#editCap');
+
+            modalTitle.textContent = 'Edit Tỉnh ' + ten;
+            inputMaT.value = id;
+            inputTen.value = ten;
+            inputCap.value = cap;
+        });
+    </script>
+    <script>
+        //EDIT HUYỆN
+        var editModal2 = document.getElementById('editModal2');
+        editModal2.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var mat = button.getAttribute('data-mat');
+            var mah = button.getAttribute('data-mah');
+            var ten = button.getAttribute('data-ten');
+            var cap = button.getAttribute('data-cap');
+
+            var modalTitle = editModal2.querySelector('.modal-title');
+            var inputMaT = editModal2.querySelector('#editMaT');
+            var inputMaH = editModal2.querySelector('#editMaH');
+            var inputTen = editModal2.querySelector('#editTen');
+            var inputCap = editModal2.querySelector('#editCap');
+
+            modalTitle.textContent = 'Edit Huyện ' + ten;
+            inputMaT.value = mat;
+            inputMaH.value = mah;
+            inputTen.value = ten;
+            inputCap.value = cap;
+        });
+    </script>
+
+    <script>
+        //edit xã
+        var editModal3 = document.getElementById('editModal3');
+        editModal3.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var mat = button.getAttribute('data-mat');
+            var mah = button.getAttribute('data-mah');
+            var max = button.getAttribute('data-max');
+            var ten = button.getAttribute('data-ten');
+            var cap = button.getAttribute('data-cap');
+
+            var modalTitle = editModal3.querySelector('.modal-title');
+            var inputMaT = editModal3.querySelector('#editMaTa');
+            var inputMaH = editModal3.querySelector('#editMaHa');
+            var inputMaX = editModal3.querySelector('#editMaX');
+            var inputTen = editModal3.querySelector('#editTen');
+            var inputCap = editModal3.querySelector('#editCap');
+
+            modalTitle.textContent = 'Edit Xã ' + ten;
+            inputMaT.value = mat;
+            inputMaH.value = mah;
+            inputMaX.value = max;
+            inputTen.value = ten;
+            inputCap.value = cap;
+
+            // Gọi hàm loadHuyens với tiền tố 'edit'
+
+            loadHuyens('edit', mah);
+        });
+
+
+        function loadHuyens(prefix, maHuyen) {
+            var tinhSelect = document.getElementById(prefix + 'MaTwCreateT');
+            var huyenSelect = document.getElementById(prefix + 'MaHwCreateT');
+            var tinhId = tinhSelect.value;
+            console.log(tinhSelect)
+            huyenSelect.innerHTML = '<option value="">Chọn Huyện</option>';
+
+            if (tinhId) {
+                fetch('/THX/GetHuyens?maT=' + tinhId)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(huyen => {
+                            var option = document.createElement('option');
+                            option.value = huyen.maH;
+                            option.innerHTML = huyen.ten;
+                            huyenSelect.appendChild(option);
+                        });
+
+                        // Chọn giá trị mặc định cho Huyện
+                        huyenSelect.value = maHuyen;
+                    });
+            }
+        }
+
+        $("#createMaT").change(function () {
+            console.log($(this).val());
+        });
+    </script>
+    
+    <script>
+        //xóa tỉnh
+        $(document).on('click', '.btn-delete', function () {
+            var tinhId = $(this).data('id');
+
+            if (confirm('Bạn có chắc chắn muốn xóa mục này không?')) {
+                $.ajax({
+                    url: '/Tinh/Delete/' + tinhId,
+                    type: 'POST',
+                    success: function (result) {
+                        // Xử lý thành công, chẳng hạn như loại bỏ mục đã xóa khỏi giao diện người dùng
+                        // Bạn có thể cần tải lại trang hoặc cập nhật giao diện người dùng một cách nào đó
+                        // Để đơn giản, hãy tải lại trang
+                        location.reload();
+                    },
+                    error: function (xhr, status, error) {
+                        // Xử lý lỗi
+                        console.error(xhr.responseText);
+                        alert('Đã xảy ra lỗi khi xóa mục.');
+                    }
+                });
+            }
+        });
+        // Xử lý sự kiện nhấn nút xóa huyện
+        $(document).on('click', '.btn-delete-huyen', function () {
+            var huyenId = $(this).data('id');
+
+            if (confirm('Bạn có chắc chắn muốn xóa huyện này không?')) {
+                $.ajax({
+                    url: '/Huyen/Delete/' + huyenId,
+                    type: 'POST',
+                    success: function (result) {
+                        // Xử lý thành công, cập nhật giao diện người dùng
+                        // Ví dụ: tải lại trang hoặc xóa hàng tương ứng từ bảng
+                        location.reload();
+                    },
+                    error: function (xhr, status, error) {
+                        // Xử lý lỗi
+                        console.error(xhr.responseText);
+                        alert('Đã xảy ra lỗi khi xóa huyện.');
+                    }
+                });
+            }
+        });
+    </script>
+    <script>
+        // Xử lý sự kiện nhấn nút xóa Xã
+        $(document).on('click', '.btn-delete-xa', function () {
+            var xaId = $(this).data('id');
+
+            if (confirm('Bạn có chắc chắn muốn xóa Xã này không?')) {
+                $.ajax({
+                    url: '/Xa/Delete/' + xaId,
+                    type: 'POST',
+                    success: function (result) {
+                        // Xử lý thành công, cập nhật giao diện người dùng
+                        // Ví dụ: tải lại trang hoặc xóa hàng tương ứng từ bảng
+                        location.reload();
+                    },
+                    error: function (xhr, status, error) {
+                        // Xử lý lỗi
+                        console.error(xhr.responseText);
+                        alert('Đã xảy ra lỗi khi xóa Xã.');
+                    }
+                });
+            }
+        });
+
+    </script>
+    <script>
+
+    </script>
+</body>
+</html>

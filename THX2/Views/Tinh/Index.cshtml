@@ -1,0 +1,127 @@
+﻿@model IEnumerable<THX2.Entities.Tinh>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header align-items-center d-flex">
+                <h4 class="card-title mb-0 flex-grow-1">
+                    Tỉnh
+                    
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal1">Create</button>
+                </h4>
+            </div><!-- end card header -->
+
+            <div class="card-body">
+                <div class="live-preview">
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle table-nowrap mb-0">
+                            <thead class="thead-light text-center">
+                                <tr>
+                                    <th scope="col">Mã Tỉnh</th>
+                                    <th scope="col">Tên Tỉnh</th>
+                                    <th scope="col">Cấp</th>
+                                    <th scope="col">Hành Động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td class="fw-medium text-center">@item.MaT</td>
+                                        <td class="text-center">@item.Ten</td>
+                                        <td class="text-center">@item.Cap</td>
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal" data-id="@item.MaT" data-ten="@item.Ten" data-cap="@item.Cap">Edit</button>
+                                            <form asp-controller="Tinh" asp-action="Delete" method="post" style="display: inline;">
+                                                <input type="hidden" name="id" value="@item.MaT" />
+                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div><!-- end card-body -->
+        </div><!-- end card -->
+    </div>
+</div>
+
+<!-- Modal Create  Tinh -->
+<div class="modal fade" id="createModal1" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createModalLabel">Create Tỉnh</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-controller="Tinh" asp-action="Create" method="post">
+                    <div class="mb-3">
+                        <label for="MaTinh" class="form-label">Mã Tỉnh</label>
+                        <input type="text" class="form-control" name="MaT" id="createMaT">
+                    </div>
+                    <div class="mb-3">
+                        <label for="TenTinh" class="form-label">Tên Tỉnh</label>
+                        <input type="text" class="form-control" name="Ten" id="createTen">
+                    </div>
+                    <div class="mb-3">
+                        <label for="Cap" class="form-label">Cấp</label>
+                        <input type="text" class="form-control" name="Cap" id="createCap">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit Tinh -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Tỉnh</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-controller="Tinh" asp-action="Edited" method="post">
+                    <input type="hidden" name="MaT" id="editMaT" />
+                    
+                    <div class="mb-3">
+                        <label for="Ten" class="form-label">Tên Tỉnh</label>
+                        <input type="text" class="form-control" name="Ten" id="editTen">
+                    </div>
+                    <div class="mb-3">
+                        <label for="Cap" class="form-label">Cấp</label>
+                        <input type="text" class="form-control" name="Cap" id="editCap">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var editModal = document.getElementById('editModal');
+        editModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var id = button.getAttribute('data-id');
+            var ten = button.getAttribute('data-ten');
+            var cap = button.getAttribute('data-cap');
+
+            var modalTitle = editModal.querySelector('.modal-title');
+            var inputMaT = editModal.querySelector('#editMaT');
+            var inputTen = editModal.querySelector('#editTen');
+            var inputCap = editModal.querySelector('#editCap');
+
+            modalTitle.textContent = 'Edit Tỉnh ' + ten;
+            inputMaT.value = id;
+            inputTen.value = ten;
+            inputCap.value = cap;
+        });
+    </script>
+}

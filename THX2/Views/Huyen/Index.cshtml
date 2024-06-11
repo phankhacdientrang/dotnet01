@@ -1,0 +1,152 @@
+﻿@model IEnumerable<THX2.Entities.Huyen>
+@{
+    var tinhList = (IEnumerable<THX2.Entities.Tinh>)ViewData["Tinh"];
+}
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header align-items-center d-flex">
+                <h4 class="card-title mb-0 flex-grow-1">
+                    Huyện
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">Create</button>
+                </h4>
+            </div><!-- end card header -->
+
+            <div class="card-body">
+                <div class="live-preview">
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle table-nowrap mb-0">
+                            <thead class="thead-light text-center">
+                                <tr>
+                                    <th scope="col">Mã Tỉnh</th>
+                                    <th scope="col">Mã Huyện</th>
+                                    <th scope="col">Tên Huyện</th>
+                                    <th scope="col">Cấp</th>
+                                    <th scope="col">Hành Động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td class="fw-medium text-center">@item.MaT</td>
+                                        <td class="text-center">@item.MaH</td>
+                                        <td class="text-center">@item.Ten</td>
+                                        <td class="text-center">@item.Cap</td>
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal" data-mat="@item.MaT" data-mah="@item.MaH" data-ten="@item.Ten" data-cap="@item.Cap">Edit</button>
+                                            <form asp-controller="Huyen" asp-action="Delete" method="post" style="display: inline;">
+                                                <input type="hidden" name="id" value="@item.MaH" />
+                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div><!-- end card-body -->
+        </div><!-- end card -->
+    </div>
+</div>
+
+<!-- Modal Create Huyen -->
+<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createModalLabel">Create Huyện</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-controller="Huyen" asp-action="Create" method="post">
+                    <div class="mb-3">
+                        <label for="MaT" class="form-label">Mã Tỉnh</label>
+                        <select class="form-select" name="MaT" id="createMaT">
+                            @foreach (var tinh in tinhList)
+                            {
+                                <option value="@tinh.MaT">@tinh.Ten</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="MaH" class="form-label">Mã Huyện</label>
+                        <input type="text" class="form-control" name="MaH" id="createMaH">
+                    </div>
+                    <div class="mb-3">
+                        <label for="Ten" class="form-label">Tên Huyện</label>
+                        <input type="text" class="form-control" name="Ten" id="createTen">
+                    </div>
+                    <div class="mb-3">
+                        <label for="Cap" class="form-label">Cấp</label>
+                        <input type="text" class="form-control" name="Cap" id="createCap">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit Huyen -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Huyện</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-controller="Huyen" asp-action="Edited" method="post">
+                    <input type="hidden" name="MaH" id="editMaH" />
+                    <div class="mb-3">
+                        <label for="MaT" class="form-label">Mã Tỉnh</label>
+                        <select class="form-select" name="MaT" id="editMaT">
+                            @foreach (var tinh in tinhList)
+                            {
+                                <option value="@tinh.MaT">@tinh.Ten</option>
+                            }
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="Ten" class="form-label">Tên Huyện</label>
+                        <input type="text" class="form-control" name="Ten" id="editTen">
+                    </div>
+                    <div class="mb-3">
+                        <label for="Cap" class="form-label">Cấp</label>
+                        <input type="text" class="form-control" name="Cap" id="editCap">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var editModal = document.getElementById('editModal');
+        editModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var mat = button.getAttribute('data-mat');
+            var mah = button.getAttribute('data-mah');
+            var ten = button.getAttribute('data-ten');
+            var cap = button.getAttribute('data-cap');
+
+            var modalTitle = editModal.querySelector('.modal-title');
+            var inputMaT = editModal.querySelector('#editMaT');
+            var inputMaH = editModal.querySelector('#editMaH');
+            var inputTen = editModal.querySelector('#editTen');
+            var inputCap = editModal.querySelector('#editCap');
+
+            modalTitle.textContent = 'Edit Huyện ' + ten;
+            inputMaT.value = mat;
+            inputMaH.value = mah;
+            inputTen.value = ten;
+            inputCap.value = cap;
+        });
+    </script>
+}
